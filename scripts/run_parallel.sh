@@ -67,7 +67,7 @@ monitor &
 MONITOR_PID=$!
 
 for i in $(seq 1 $INSTANCES); do
-    ./run_tfg.sh $MODE &
+    "$SCRIPT_DIR/run_tfg.sh" $MODE &
 
     if [ $i -lt $INSTANCES ]; then
         echo "Instancia $i lanzada — esperando 30s..."

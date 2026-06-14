@@ -108,24 +108,24 @@ pip install numpy pandas pymoo matplotlib
 
 ```bash
 # Modo original (default)
-./run_tfg.sh
+./scripts/run_tfg.sh
 
 # Modo modificado
-./run_tfg.sh modified
+./scripts/run_tfg.sh modified
 ```
 
-`run_tfg.sh` activa el virtualenv automáticamente y suprime los logs internos. No requiere activación previa del entorno.
+`scripts/run_tfg.sh` activa el virtualenv automáticamente y suprime los logs internos. No requiere activación previa del entorno.
 
 ### Ejecución en paralelo
 
 ```bash
-# ./run_parallel.sh <modo> <instancias>
+# ./scripts/run_parallel.sh <modo> <instancias>
 
 # 3 instancias en modo original
-./run_parallel.sh original 3
+./scripts/run_parallel.sh original 3
 
 # 5 instancias en modo modified
-./run_parallel.sh modified 5
+./scripts/run_parallel.sh modified 5
 ```
 
 Lanza `N` instancias del notebook con un intervalo de 30 segundos entre cada una para evitar conflictos de inicialización del kernel. Incluye un monitor en tiempo real que muestra el estado de cada proceso (PID, CPU, memoria). Ctrl+C termina todas las instancias activas sin dejar procesos huérfanos.
@@ -133,7 +133,7 @@ Lanza `N` instancias del notebook con un intervalo de 30 segundos entre cada una
 ### Monitor independiente
 
 ```bash
-./monitor_parallel.sh
+./scripts/monitor_parallels.sh
 ```
 
 Muestra en tiempo real todos los procesos `RUN_TFG.py` activos con su PID, uso de CPU, memoria y tiempo transcurrido. Útil para supervisar ejecuciones lanzadas previamente. Ctrl+C cierra solo el monitor, los procesos siguen corriendo.
@@ -142,9 +142,10 @@ Muestra en tiempo real todos los procesos `RUN_TFG.py` activos con su PID, uso d
 
 ```
 proyecto/
-├── run_tfg.sh           # Lanza una instancia individual
-├── run_parallel.sh      # Lanza N instancias en paralelo con monitor
-├── monitor_parallel.sh  # Monitor independiente de procesos activos
+├── scripts/
+│   ├── run_tfg.sh           # Lanza una instancia individual
+│   ├── run_parallel.sh      # Lanza N instancias en paralelo con monitor
+│   └── monitor_parallels.sh # Monitor independiente de procesos activos
 └── src/
     ├── RUN_TFG.py
     └── TFG.ipynb
