@@ -9,17 +9,13 @@ fi
 MODE=$1
 INSTANCES=$2
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PIDS_FILE="$SCRIPT_DIR/.pids"
-
-# Limpiar pids anteriores
-rm -f "$PIDS_FILE"
-touch "$PIDS_FILE"
+PIDS=()
 
 cleanup() {
     echo ""
     echo "Interrumpido — matando procesos activos..."
+    kill "${PIDS[@]}" 2>/dev/null
     pkill -f RUN_TFG.py
-    rm -f "$PIDS_FILE"
     kill $MONITOR_PID 2>/dev/null
     exit 1
 }
@@ -31,29 +27,24 @@ monitor() {
     while true; do
         RUNNING=0
         STATUS=""
-        LAUNCHED=0
 
-        while IFS= read -r PID; do
-            LAUNCHED=$((LAUNCHED + 1))
-            if kill -0 $PID 2>/dev/null; then
-                CPU=$(ps -p $PID -o %cpu= 2>/dev/null | tr -d ' ')
-                MEM=$(ps -p $PID -o %mem= 2>/dev/null | tr -d ' ')
-                STATUS+="  [PID=$PID] corriendo — CPU: ${CPU}% MEM: ${MEM}%\n"
-                RUNNING=$((RUNNING + 1))
-            else
-                STATUS+="  [PID=$PID] finalizado\n"
-            fi
-        done < "$PIDS_FILE"
+        while IFS= read -r line; do
+            PID=$(echo "$line" | awk '{print $1}')
+            CPU=$(echo "$line" | awk '{print $2}')
+            MEM=$(echo "$line" | awk '{print $3}')
+            ELAPSED=$(echo "$line" | awk '{print $4}')
+            STATUS+="  [PID=$PID] corriendo — CPU: ${CPU}% MEM: ${MEM}% ELAPSED: ${ELAPSED}\n"
+            RUNNING=$((RUNNING + 1))
+        done < <(ps -eo pid,%cpu,%mem,etime,args | grep "RUN_TFG.py $MODE" | grep -v grep)
 
         clear
         echo "=== Instancias MODE='$MODE' === $(date '+%H:%M:%S') | Ctrl+C para terminar todo"
-        echo "Lanzadas: $LAUNCHED / $INSTANCES — Activas: $RUNNING"
+        echo "Activas: $RUNNING / $INSTANCES"
         echo ""
         echo -e "$STATUS"
 
-        if [ $RUNNING -eq 0 ] && [ $LAUNCHED -eq $INSTANCES ]; then
+        if [ $RUNNING -eq 0 ]; then
             echo "Todas las instancias finalizaron."
-            rm -f "$PIDS_FILE"
             break
         fi
 

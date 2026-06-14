@@ -3,7 +3,8 @@
 MODE=${1:-original}
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-VENV="$SCRIPT_DIR/.venv"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+VENV="$PROJECT_DIR/.venv"
 
 if [ -f "$VENV/bin/python" ]; then
     PYTHON="$VENV/bin/python"
@@ -15,7 +16,4 @@ else
     exit 1
 fi
 
-"$PYTHON" "$SCRIPT_DIR/src/RUN_TFG.py" $MODE > /dev/null 2>&1 &
-PYTHON_PID=$!
-echo $PYTHON_PID >> "$SCRIPT_DIR/.pids"
-wait $PYTHON_PID
+"$PYTHON" "$PROJECT_DIR/src/RUN_TFG.py" $MODE > /dev/null 2>&1
