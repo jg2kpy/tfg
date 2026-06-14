@@ -5,7 +5,6 @@ MODE=${1:-original}
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 VENV="$SCRIPT_DIR/.venv"
 
-# Buscar python del venv (WSL/Linux o Windows nativo)
 if [ -f "$VENV/bin/python" ]; then
     PYTHON="$VENV/bin/python"
 elif [ -f "$VENV/Scripts/python.exe" ]; then
@@ -16,6 +15,7 @@ else
     exit 1
 fi
 
-echo "Iniciando MODE='$MODE'..."
-"$PYTHON" "$SCRIPT_DIR/src/RUN_TFG.py" $MODE > /dev/null 2>&1
-echo "Finalizado con código de salida: $?"
+"$PYTHON" "$SCRIPT_DIR/src/RUN_TFG.py" $MODE > /dev/null 2>&1 &
+PYTHON_PID=$!
+echo $PYTHON_PID >> "$SCRIPT_DIR/.pids"
+wait $PYTHON_PID
