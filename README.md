@@ -104,7 +104,40 @@ pip install numpy pandas pymoo matplotlib
 
 ## Uso
 
-> _Pendiente._
+### Ejecución simple
+
+```bash
+# Modo original (default)
+./run_tfg.sh
+
+# Modo modificado
+./run_tfg.sh modified
+```
+
+### Ejecución en paralelo
+
+```bash
+# ./run_parallel.sh  
+
+# 3 instancias en modo original
+./run_parallel.sh original 3
+
+# 5 instancias en modo modified
+./run_parallel.sh modified 5
+```
+
+> Las instancias se lanzan con un intervalo de 30 segundos entre cada una. Los logs se suprimen; para verlos, ejecutar `run_tfg.sh` directamente.
+
+### Estructura del proyecto
+
+```
+proyecto/
+├── run_tfg.sh
+├── run_parallel.sh
+└── src/
+    ├── RUN_TFG.py
+    └── TFG.ipynb
+```
 
 ## Dataset
 
