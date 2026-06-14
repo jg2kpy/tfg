@@ -23,7 +23,6 @@ Autor: **José Luis Junior Gutiérrez Agüero** · Tutor: D.Sc. Ing. Christian v
 - [Instalación](#instalación)
 - [Uso](#uso)
 - [Dataset](#dataset)
-- [Trabajos futuros](#trabajos-futuros)
 - [Cita](#cita)
 
 ---
