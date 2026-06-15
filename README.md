@@ -136,7 +136,7 @@ Lanza `N` instancias del notebook con un intervalo de 30 segundos entre cada una
 ./scripts/monitor_parallels.sh
 ```
 
-Muestra en tiempo real todos los procesos `RUN_TFG.py` activos con su PID, uso de CPU, memoria y tiempo transcurrido. Útil para supervisar ejecuciones lanzadas previamente. Ctrl+C cierra solo el monitor, los procesos siguen corriendo.
+Muestra en tiempo real todos los procesos `run_tfg.py` activos con su PID, uso de CPU, memoria y tiempo transcurrido. Útil para supervisar ejecuciones lanzadas previamente. Ctrl+C cierra solo el monitor, los procesos siguen corriendo.
 
 ### Estructura del proyecto
 
@@ -147,7 +147,7 @@ proyecto/
 │   ├── run_parallel.sh      # Lanza N instancias en paralelo con monitor
 │   └── monitor_parallels.sh # Monitor independiente de procesos activos
 └── src/
-    ├── RUN_TFG.py
+    ├── run_tfg.py
     └── TFG.ipynb
 ```
 

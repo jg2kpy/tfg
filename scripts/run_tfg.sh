@@ -16,4 +16,4 @@ else
     exit 1
 fi
 
-"$PYTHON" "$PROJECT_DIR/src/RUN_TFG.py" $MODE > /dev/null 2>&1
+"$PYTHON" "$PROJECT_DIR/src/run_tfg.py" $MODE > /dev/null 2>&1

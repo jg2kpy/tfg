@@ -15,7 +15,7 @@ cleanup() {
     echo ""
     echo "Interrumpido — matando procesos activos..."
     kill "${PIDS[@]}" 2>/dev/null
-    pkill -f RUN_TFG.py
+    pkill -f run_tfg.py
     kill $MONITOR_PID 2>/dev/null
     exit 1
 }
@@ -35,7 +35,7 @@ monitor() {
             ELAPSED=$(echo "$line" | awk '{print $4}')
             STATUS+="  [PID=$PID] corriendo — CPU: ${CPU}% MEM: ${MEM}% ELAPSED: ${ELAPSED}\n"
             RUNNING=$((RUNNING + 1))
-        done < <(ps -eo pid,%cpu,%mem,etime,args | grep "RUN_TFG.py $MODE" | grep -v grep)
+        done < <(ps -eo pid,%cpu,%mem,etime,args | grep "run_tfg.py $MODE" | grep -v grep)
 
         clear
         echo "=== Instancias MODE='$MODE' === $(date '+%H:%M:%S') | Ctrl+C para terminar todo"
@@ -61,10 +61,7 @@ for i in $(seq 1 $INSTANCES); do
     "$SCRIPT_DIR/run_tfg.sh" $MODE &
 
     if [ $i -lt $INSTANCES ]; then
-        echo "Instancia $i lanzada — esperando 30s..."
         sleep 30
-    else
-        echo "Instancia $i lanzada"
     fi
 done
 
