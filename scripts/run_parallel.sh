@@ -9,42 +9,17 @@ fi
 INSTANCES=$1
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PIDS=()
-MONITOR_PID=""
 
 cleanup() {
     echo ""
     echo "Interrumpido — matando procesos activos..."
-    for pid in "${PIDS[@]}"; do
-        # Matar también el hijo Python
-        child=$(pgrep -P "$pid" 2>/dev/null | head -1)
-        [ -n "$child" ] && kill "$child" 2>/dev/null
-        kill "$pid" 2>/dev/null
-    done
+    kill "${PIDS[@]}" 2>/dev/null
     pkill -f run_tfg.py
-    [ -n "$MONITOR_PID" ] && kill "$MONITOR_PID" 2>/dev/null
+    kill $MONITOR_PID 2>/dev/null
     exit 1
 }
 
 trap cleanup SIGINT SIGTERM
-
-is_running() {
-    kill -0 "$1" 2>/dev/null
-}
-
-get_stats() {
-    local pid=$1
-    # Buscar hijo Python del wrapper .sh
-    local target
-    target=$(pgrep -P "$pid" 2>/dev/null | head -1)
-    [ -z "$target" ] && target="$pid"
-
-    local elapsed cpu mem
-    elapsed=$(ps -o etime= -p "$target" 2>/dev/null | tr -d ' ')
-    cpu=$(ps -o %cpu= -p "$target" 2>/dev/null | tr -d ' ')
-    mem=$(ps -o %mem= -p "$target" 2>/dev/null | tr -d ' ')
-
-    echo "$target|${cpu:-0}|${mem:-0}|${elapsed:--}"
-}
 
 monitor() {
     sleep 2
@@ -52,15 +27,14 @@ monitor() {
         RUNNING=0
         STATUS=""
 
-        for pid in "${PIDS[@]}"; do
-            if is_running "$pid"; then
-                IFS='|' read -r target cpu mem elapsed <<< "$(get_stats "$pid")"
-                STATUS+="  [PID=$pid → python:$target] corriendo — CPU: ${cpu}% MEM: ${mem}% ELAPSED: $elapsed\n"
-                RUNNING=$((RUNNING + 1))
-            else
-                STATUS+="  [PID=$pid] finalizado\n"
-            fi
-        done
+        while IFS= read -r line; do
+            PID=$(echo "$line" | awk '{print $1}')
+            CPU=$(echo "$line" | awk '{print $2}')
+            MEM=$(echo "$line" | awk '{print $3}')
+            ELAPSED=$(echo "$line" | awk '{print $4}')
+            STATUS+="  [PID=$PID] corriendo — CPU: ${CPU}% MEM: ${MEM}% ELAPSED: ${ELAPSED}\n"
+            RUNNING=$((RUNNING + 1))
+        done < <(ps -eo pid,%cpu,%mem,etime,args | grep "run_tfg.py" | grep -v grep)
 
         clear
         echo "=== Instancias === $(date '+%H:%M:%S') | Ctrl+C para terminar todo"
@@ -68,7 +42,7 @@ monitor() {
         echo ""
         echo -e "$STATUS"
 
-        if [ "$RUNNING" -eq 0 ]; then
+        if [ $RUNNING -eq 0 ]; then
             echo "Todas las instancias finalizaron."
             break
         fi
@@ -79,19 +53,15 @@ monitor() {
 
 echo "Lanzando $INSTANCES instancias..."
 
-for i in $(seq 1 "$INSTANCES"); do
+for i in $(seq 1 $INSTANCES); do
     "$SCRIPT_DIR/run_tfg.sh" &
-    PIDS+=($!)
-    echo "  Instancia $i lanzada [PID=${PIDS[-1]}]"
 
-    if [ "$i" -lt "$INSTANCES" ]; then
+    if [ $i -lt $INSTANCES ]; then
         sleep 10
     fi
 done
 
-echo "Todas las instancias lanzadas. Iniciando monitor..."
-
 monitor &
 MONITOR_PID=$!
 
-wait "$MONITOR_PID"
+wait $MONITOR_PID
