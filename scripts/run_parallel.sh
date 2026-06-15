@@ -61,7 +61,7 @@ for i in $(seq 1 $INSTANCES); do
     "$SCRIPT_DIR/run_tfg.sh" $MODE &
 
     if [ $i -lt $INSTANCES ]; then
-        sleep 30
+        sleep 10
     fi
 done
 

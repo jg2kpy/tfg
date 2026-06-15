@@ -128,7 +128,7 @@ pip install numpy pandas pymoo matplotlib
 ./scripts/run_parallel.sh modified 5
 ```
 
-Lanza `N` instancias del notebook con un intervalo de 30 segundos entre cada una para evitar conflictos de inicialización del kernel. Incluye un monitor en tiempo real que muestra el estado de cada proceso (PID, CPU, memoria). Ctrl+C termina todas las instancias activas sin dejar procesos huérfanos.
+Lanza `N` instancias del notebook con un intervalo de 10 segundos entre cada una para evitar conflictos de inicialización del kernel. Incluye un monitor en tiempo real que muestra el estado de cada proceso (PID, CPU, memoria). Ctrl+C termina todas las instancias activas sin dejar procesos huérfanos.
 
 ### Monitor independiente
 
