@@ -17,7 +17,7 @@ def run_notebook_from_cell(
     start_cell_index: int,
     output_path: str = None,
     kernel_name: str = "python3",
-    timeout: int = 600,
+    timeout: int = 9999999999,
 ):
     with open(notebook_path, encoding="utf-8") as f:
         nb = nbformat.read(f, as_version=4)
