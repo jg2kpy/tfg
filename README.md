@@ -99,7 +99,7 @@ pip install -r requirements.txt
 o directamente:
 
 ```bash
-pip install numpy pandas pymoo matplotlib
+pip install numpy pandas pymoo matplotlib nbformat nbconvert
 ```
 
 ## Uso
