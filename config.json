@@ -22,7 +22,7 @@
     "logging": true,
     "u_turning_point": 500,
     "L_tamano_lista": 10,
-    "N_tamano_poblacion": 100,
+    "N_tamano_poblacion": 50,
     "T_iteraciones": 3000,
     "r_max_calificacion_maxima": 5,
     "n_obj": 2,
