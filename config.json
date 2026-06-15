@@ -1,0 +1,43 @@
+{
+  "paths": {
+    "dataset_latest_small_path": "../datasets/ml-latest-small/ratings.csv",
+    "dataset_100k_path": "../datasets/ml-100k/ratings.csv",
+    "dataset_20m_path": "../datasets/movielens-20m-dataset/rating.csv",
+    "data_path": "./data"
+  },
+  "preprocess": {
+    "top_usuarios": 10000,
+    "newcomer_filter": 5
+  },
+  "user_based_cf": {
+    "K": 20,
+    "limit": 5,
+    "eliminar_newcomers": true,
+    "calcular_pesos": false,
+    "hacer_test": false
+  },
+  "hp_moea": {
+    "mode": "original",
+    "test_mode": true,
+    "logging": true,
+    "u_turning_point": 500,
+    "L_tamano_lista": 10,
+    "N_tamano_poblacion": 100,
+    "T_iteraciones": 3000,
+    "r_max_calificacion_maxima": 5,
+    "n_obj": 2,
+    "algorithm_name": "NSGA-II",
+    "use_precalculated_CF": true,
+    "cf_config": {
+      "K": 25,
+      "limit": 5,
+      "calcular_pesos": false,
+      "hacer_test": false
+    },
+    "test_mode_overrides": {
+      "T_iteraciones": 50,
+      "N_tamano_poblacion": 50
+    }
+  },
+  "seed": null
+}
