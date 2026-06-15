@@ -15,6 +15,9 @@ cleanup() {
     echo ""
     echo "Interrumpido — matando procesos activos..."
     for pid in "${PIDS[@]}"; do
+        # Matar también el hijo Python
+        child=$(pgrep -P "$pid" 2>/dev/null | head -1)
+        [ -n "$child" ] && kill "$child" 2>/dev/null
         kill "$pid" 2>/dev/null
     done
     pkill -f run_tfg.py
@@ -28,6 +31,21 @@ is_running() {
     kill -0 "$1" 2>/dev/null
 }
 
+get_stats() {
+    local pid=$1
+    # Buscar hijo Python del wrapper .sh
+    local target
+    target=$(pgrep -P "$pid" 2>/dev/null | head -1)
+    [ -z "$target" ] && target="$pid"
+
+    local elapsed cpu mem
+    elapsed=$(ps -o etime= -p "$target" 2>/dev/null | tr -d ' ')
+    cpu=$(ps -o %cpu= -p "$target" 2>/dev/null | tr -d ' ')
+    mem=$(ps -o %mem= -p "$target" 2>/dev/null | tr -d ' ')
+
+    echo "$target|${cpu:-0}|${mem:-0}|${elapsed:--}"
+}
+
 monitor() {
     sleep 2
     while true; do
@@ -36,10 +54,8 @@ monitor() {
 
         for pid in "${PIDS[@]}"; do
             if is_running "$pid"; then
-                ELAPSED=$(ps -o etime= -p "$pid" 2>/dev/null | tr -d ' ')
-                CPU=$(ps -o %cpu= -p "$pid" 2>/dev/null | tr -d ' ')
-                MEM=$(ps -o %mem= -p "$pid" 2>/dev/null | tr -d ' ')
-                STATUS+="  [PID=$pid] corriendo — CPU: ${CPU}% MEM: ${MEM}% ELAPSED: ${ELAPSED}\n"
+                IFS='|' read -r target cpu mem elapsed <<< "$(get_stats "$pid")"
+                STATUS+="  [PID=$pid → python:$target] corriendo — CPU: ${cpu}% MEM: ${mem}% ELAPSED: $elapsed\n"
                 RUNNING=$((RUNNING + 1))
             else
                 STATUS+="  [PID=$pid] finalizado\n"
