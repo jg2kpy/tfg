@@ -36,7 +36,7 @@
     },
     "test_mode_overrides": {
       "T_iteraciones": 50,
-      "N_tamano_poblacion": 200
+      "N_tamano_poblacion": 50
     }
   },
   "seed": null
