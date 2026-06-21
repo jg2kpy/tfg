@@ -17,7 +17,7 @@
     "hacer_test": false
   },
   "hp_moea": {
-    "mode": "original",
+    "mode": "modified",
     "test_mode": true,
     "logging": true,
     "u_turning_point": 500,
