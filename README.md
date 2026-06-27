@@ -21,6 +21,7 @@ Autor: **José Luis Junior Gutiérrez Agüero** · Tutor: D.Sc. Ing. Christian v
 - [Resultados](#resultados)
 - [Stack](#stack)
 - [Instalación](#instalación)
+- [Configuración](#configuración)
 - [Uso](#uso)
 - [Dataset](#dataset)
 - [Cita](#cita)
@@ -99,12 +100,81 @@ pip install -r requirements.txt
 o directamente:
 
 ```bash
-pip install numpy pandas pymoo matplotlib
+pip install numpy pandas pymoo matplotlib nbformat nbconvert
 ```
+
+## Configuración
+
+Todos los parámetros de ejecución (rutas de datasets, preprocesamiento, filtrado colaborativo y configuración de HP-MOEA) se centralizan en `config.json`, en la raíz del proyecto:
+
+```jsonc
+{
+  "paths": { ... },           // rutas de datasets y carpeta de datos preprocesados
+  "preprocess": { ... },       // top_usuarios, newcomer_filter
+  "user_based_cf": { ... },     // K, limit, eliminar_newcomers, calcular_pesos, hacer_test
+  "hp_moea": {
+    "mode": "original",        // "original" | "modified"
+    "test_mode": true,         // usa los overrides de test_mode_overrides
+    "logging": true,
+    "u_turning_point": 500,
+    "L_tamano_lista": 10,
+    "N_tamano_poblacion": 100,
+    "T_iteraciones": 3000,
+    "r_max_calificacion_maxima": 5,
+    "n_obj": 2,
+    "algorithm_name": "NSGA-II",
+    "use_precalculated_CF": true,
+    "cf_config": { ... },
+    "test_mode_overrides": { "T_iteraciones": 50, "N_tamano_poblacion": 50 }
+  },
+  "seed": null                 // null = semilla aleatoria; o un entero fijo
+}
+```
+
+`TFG.ipynb` lee este archivo al inicio y ya no requiere editar el notebook para cambiar `MODE`, `N`, `T` u otros parámetros — basta con modificar `config.json`.
 
 ## Uso
 
-> _Pendiente._
+### Ejecución simple
+
+```bash
+./scripts/run_tfg.sh
+```
+
+`scripts/run_tfg.sh` activa el virtualenv automáticamente y suprime los logs internos. No requiere activación previa del entorno. El modo y demás parámetros se definen en `config.json`.
+
+### Ejecución en paralelo
+
+```bash
+# ./scripts/run_parallel.sh <instancias>
+
+# 3 instancias
+./scripts/run_parallel.sh 3
+```
+
+Lanza `N` instancias del notebook con un intervalo de 10 segundos entre cada una para evitar conflictos de inicialización del kernel. Incluye un monitor en tiempo real que muestra el estado de cada proceso (PID, CPU, memoria). Ctrl+C termina todas las instancias activas sin dejar procesos huérfanos.
+
+### Monitor independiente
+
+```bash
+./scripts/monitor_parallels.sh
+```
+
+Muestra en tiempo real todos los procesos `run_tfg.py` activos con su PID, uso de CPU, memoria y tiempo transcurrido. Útil para supervisar ejecuciones lanzadas previamente. Ctrl+C cierra solo el monitor, los procesos siguen corriendo.
+
+### Estructura del proyecto
+
+```
+proyecto/
+├── config.json              # Parámetros de ejecución (rutas, CF, HP-MOEA)
+├── scripts/
+│   ├── run_tfg.sh           # Lanza una instancia individual
+│   ├── run_parallel.sh      # Lanza N instancias en paralelo con monitor
+│   └── monitor_parallels.sh # Monitor independiente de procesos activos
+└── src/
+    ├── run_tfg.py
+    └── TFG.ipynb
+```
 
 ## Dataset
 
